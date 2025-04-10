@@ -10,7 +10,7 @@ import { Proveedor } from './proveedor.entity';
 import { ReparacionComponente } from './reparacion_componente.entity';
 import { MovimientoComponente } from './movimiento_componente.entity';
 
-@Entity()
+@Entity('componentes') // Especifica el nombre exacto de la tabla en la base de datos
 export class Componente {
   @PrimaryGeneratedColumn()
   componente_id: number;

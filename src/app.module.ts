@@ -19,10 +19,10 @@ import { ReparacionComponenteModule } from './modules/reparacion_componente/repa
   imports: [
     TypeOrmModule.forRoot({
       type: 'mssql',
-      host: 'DESKTOP-FIQDVUP', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
+      host: 'LAPTOP-GHKFDTJ1', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
       port: 1433,
       username: 'sa', // Usuario que aparece en tu imagen
-      password: '12345', // La contraseña que usas en SSMS
+      password: '1234', // La contraseña que usas en SSMS
       database: 'soporte_tecnico',
       entities: [__dirname + '/entities/*.entity{.ts,.js}'],
       options: {
