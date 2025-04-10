@@ -1,21 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Ticket } from './ticket.entity';
-import { CambioEstado } from './cambio_estado.entity';
 
-@Entity()
+@Entity('estado_ticket') // Especifica el nombre exacto de la tabla en la base de datos
 export class EstadoTicket {
   @PrimaryGeneratedColumn()
-  estado_ticket_id: number;
+  estado_ticket_id: number; // Mapea a la columna `estado_ticket_id`
 
   @Column({ length: 100 })
-  estado: string;
+  estado: string; // Mapea a la columna `estado`
 
-  @OneToMany(() => Ticket, (ticket) => ticket.estadoActual)
-  tickets: Ticket[];
-
-  @OneToMany(() => CambioEstado, (cambio) => cambio.estadoAnterior)
-  cambiosEstadoAnterior: CambioEstado[];
-
-  @OneToMany(() => CambioEstado, (cambio) => cambio.estadoNuevo)
-  cambiosEstadoNuevo: CambioEstado[];
+  @OneToMany(() => Ticket, (ticket) => ticket.estado)
+  tickets: Ticket[]; // Relación con la entidad `Ticket`
 }
