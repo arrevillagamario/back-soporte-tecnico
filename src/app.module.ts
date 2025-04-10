@@ -14,12 +14,17 @@ import { ComentarioTicketModule } from './modules/comentario_ticket/comentario_t
 import { ComponenteModule } from './modules/componente/componente.module';
 import { MovimientoComponenteModule } from './modules/movimiento_componente/movimiento_componente.module';
 import { ReparacionComponenteModule } from './modules/reparacion_componente/reparacion_componente.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Hace que las variables de entorno estén disponibles globalmente
+    }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      host: 'DESKTOP-FIQDVUP', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
+      host: 'DESKTOP-FEGH0CR', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
       port: 1433,
       username: 'sa', // Usuario que aparece en tu imagen
       password: '12345', // La contraseña que usas en SSMS
@@ -47,7 +52,7 @@ import { ReparacionComponenteModule } from './modules/reparacion_componente/repa
     ComponenteModule,
     MovimientoComponenteModule,
     ReparacionComponenteModule,
-    // ...otros módulos
+    AuthModule,
   ],
 })
 export class AppModule {}

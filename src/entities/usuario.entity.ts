@@ -13,7 +13,7 @@ import { ComentarioTicket } from './comentario_ticket.entity';
 import { CambioEstado } from './cambio_estado.entity';
 import { MovimientoComponente } from './movimiento_componente.entity';
 
-@Entity()
+@Entity('usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
   usuario_id: number;
