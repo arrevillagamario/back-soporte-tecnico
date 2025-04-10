@@ -15,13 +15,13 @@ import { Reparacion } from './reparacion.entity';
 import { ComentarioTicket } from './comentario_ticket.entity';
 import { CambioEstado } from './cambio_estado.entity';
 
-@Entity()
+@Entity('ticket') // Especifica el nombre exacto de la tabla en la base de datos
 export class Ticket {
   @PrimaryGeneratedColumn()
-  ticket_id: number;
+  ticket_id: number; // Mapea a la columna `ticket_id`
 
-  @Column({ length: 200 })
-  titulo: string;
+  @Column({ length: 100 })
+  titulo: string; // Ejemplo de otra columna en la tabla `ticket`
 
   @Column('text')
   descripcion: string;
@@ -58,9 +58,9 @@ export class Ticket {
   @JoinColumn({ name: 'usuario_cliente_id' })
   cliente: Usuario;
 
-  @ManyToOne(() => EstadoTicket)
+  @ManyToOne(() => EstadoTicket, (estadoTicket) => estadoTicket.tickets)
   @JoinColumn({ name: 'estado_actual_id' })
-  estadoActual: EstadoTicket;
+  estado: EstadoTicket; // Relación con la entidad `EstadoTicket`
 
   @OneToMany(() => Reparacion, (reparacion) => reparacion.ticket)
   reparaciones: Reparacion[];
