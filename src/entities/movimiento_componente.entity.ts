@@ -8,7 +8,7 @@ import {
 import { Componente } from './componente.entity';
 import { Usuario } from './usuario.entity';
 
-@Entity()
+@Entity('movimiento_componente')
 export class MovimientoComponente {
   @PrimaryGeneratedColumn()
   movimiento_id: number;

@@ -1,4 +1,44 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
+import { ReparacionService } from './reparacion.service';
+import { Reparacion } from '../../entities/reparacion.entity';
 
 @Controller('reparacion')
-export class ReparacionController {}
+export class ReparacionController {
+  constructor(private readonly reparacionService: ReparacionService) {}
+
+  @Get()
+  async findAll(): Promise<Reparacion[]> {
+    return this.reparacionService.findAll();
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<Reparacion | null> {
+    return this.reparacionService.findOne(id);
+  }
+
+  @Post()
+  async create(@Body() reparacion: Reparacion): Promise<Reparacion> {
+    return this.reparacionService.create(reparacion);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() reparacion: Reparacion,
+  ): Promise<Reparacion | null> {
+    return this.reparacionService.update(id, reparacion);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: number): Promise<void> {
+    return this.reparacionService.remove(id);
+  }
+}

@@ -10,7 +10,7 @@ import { Ticket } from './ticket.entity';
 import { Usuario } from './usuario.entity';
 import { ReparacionComponente } from './reparacion_componente.entity';
 
-@Entity()
+@Entity('reparaciones')
 export class Reparacion {
   @PrimaryGeneratedColumn()
   reparacion_id: number;

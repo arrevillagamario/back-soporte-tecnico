@@ -8,7 +8,7 @@ import {
 import { Ticket } from './ticket.entity';
 import { Usuario } from './usuario.entity';
 
-@Entity()
+@Entity('comentarios_ticket')
 export class ComentarioTicket {
   @PrimaryGeneratedColumn()
   comentario_id: number;

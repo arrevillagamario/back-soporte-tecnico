@@ -9,7 +9,7 @@ import { EstadoTicket } from './estado_ticket.entity';
 import { Usuario } from './usuario.entity';
 import { Ticket } from './ticket.entity';
 
-@Entity()
+@Entity('cambio_estado')
 export class CambioEstado {
   @PrimaryGeneratedColumn()
   cambio_estado_id: number;
