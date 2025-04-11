@@ -53,7 +53,7 @@ export class TicketService {
     });
 
     if (!existing) {
-      return null; // O lanza una excepción si prefieres
+      return null;
     }
 
     Object.assign(existing, ticket);
@@ -62,5 +62,29 @@ export class TicketService {
 
   async remove(id: number): Promise<void> {
     await this.ticketRepository.delete(id);
+  }
+
+  async countTotal(): Promise<number> {
+    return this.ticketRepository.count();
+  }
+
+  async countByCategory(): Promise<{ categoria: string; total: number }[]> {
+    return this.ticketRepository
+      .createQueryBuilder('ticket')
+      .leftJoinAndSelect('ticket.categoria', 'categoria')
+      .select('categoria.categoria', 'categoria')
+      .addSelect('COUNT(ticket.ticket_id)', 'total')
+      .groupBy('categoria.categoria')
+      .getRawMany();
+  }
+
+  async countByState(): Promise<{ estado: string; total: number }[]> {
+    return this.ticketRepository
+      .createQueryBuilder('ticket')
+      .leftJoinAndSelect('ticket.estado', 'estado')
+      .select('estado.estado', 'estado') // Cambiado a 'estado.estado'
+      .addSelect('COUNT(ticket.ticket_id)', 'total')
+      .groupBy('estado.estado') // Cambiado a 'estado.estado'
+      .getRawMany();
   }
 }

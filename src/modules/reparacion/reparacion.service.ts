@@ -48,4 +48,8 @@ export class ReparacionService {
   async remove(id: number): Promise<void> {
     await this.reparacionRepository.delete(id);
   }
+
+  async count(): Promise<number> {
+    return await this.reparacionRepository.count();
+  }
 }

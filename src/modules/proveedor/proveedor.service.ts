@@ -23,11 +23,21 @@ export class ProveedorService {
 
   // Obtener un proveedor por ID
   async findOne(id: number): Promise<Proveedor | null> {
-    return await this.proveedorRepository.findOne({ where: { proveedor_id: id } });
+    return await this.proveedorRepository.findOne({
+      where: { proveedor_id: id },
+    });
+  }
+
+  // Obtener el total de proveedores
+  async count(): Promise<number> {
+    return await this.proveedorRepository.count();
   }
 
   // Actualizar un proveedor por ID
-  async update(id: number, updateProveedorDto: Partial<Proveedor>): Promise<Proveedor> {
+  async update(
+    id: number,
+    updateProveedorDto: Partial<Proveedor>,
+  ): Promise<Proveedor> {
     await this.proveedorRepository.update(id, updateProveedorDto);
     const updatedProveedor = await this.findOne(id);
     if (!updatedProveedor) {
