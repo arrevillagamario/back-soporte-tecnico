@@ -83,11 +83,15 @@ export class ReparacionService {
     });
 
     return reparaciones.reduce((total, reparacion) => {
-      const reparacionCost = reparacion.componentes.reduce((subtotal, reparacionComponente) => {
-        const costoComponente =
-          (reparacionComponente.componente?.precio || 0) * (reparacionComponente.cantidad_usada || 0);
-        return subtotal + costoComponente;
-      }, 0);
+      const reparacionCost = reparacion.componentes.reduce(
+        (subtotal, reparacionComponente) => {
+          const costoComponente =
+            (reparacionComponente.componente?.precio || 0) *
+            (reparacionComponente.cantidad_usada || 0);
+          return subtotal + costoComponente;
+        },
+        0,
+      );
       return total + reparacionCost;
     }, 0);
   }
@@ -102,11 +106,15 @@ export class ReparacionService {
     }
 
     const totalCost = reparaciones.reduce((total, reparacion) => {
-      const reparacionCost = reparacion.componentes.reduce((subtotal, reparacionComponente) => {
-        const costoComponente =
-          (reparacionComponente.componente?.precio || 0) * (reparacionComponente.cantidad_usada || 0);
-        return subtotal + costoComponente;
-      }, 0);
+      const reparacionCost = reparacion.componentes.reduce(
+        (subtotal, reparacionComponente) => {
+          const costoComponente =
+            (reparacionComponente.componente?.precio || 0) *
+            (reparacionComponente.cantidad_usada || 0);
+          return subtotal + costoComponente;
+        },
+        0,
+      );
       return total + reparacionCost;
     }, 0);
 
@@ -140,5 +148,19 @@ export class ReparacionService {
     // Crear la reparación
     const nuevaReparacion = this.reparacionRepository.create(reparacion);
     return this.reparacionRepository.save(nuevaReparacion);
+  }
+
+  async count(): Promise<number> {
+    return await this.reparacionRepository.count();
+  }
+
+  async countByMonth(): Promise<{ month: number; total: number }[]> {
+    return await this.reparacionRepository
+      .createQueryBuilder('reparacion')
+      .select('MONTH(reparacion.fecha_reparacion)', 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy('MONTH(reparacion.fecha_reparacion)')
+      .orderBy('month', 'ASC')
+      .getRawMany();
   }
 }
