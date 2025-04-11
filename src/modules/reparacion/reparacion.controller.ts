@@ -23,6 +23,11 @@ export class ReparacionController {
     const total = await this.reparacionService.getTotalRepairCost();
     return { total };
   }
+  @Get('costo-promedio')
+  async getAverageRepairCost(): Promise<{ promedio: number }> {
+    const promedio = await this.reparacionService.getAverageRepairCost();
+    return { promedio };
+  }
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Reparacion | null> {
     return this.reparacionService.findOne(id);
@@ -31,6 +36,11 @@ export class ReparacionController {
   @Post()
   async create(@Body() reparacion: Reparacion): Promise<Reparacion> {
     return this.reparacionService.create(reparacion);
+  }
+
+  @Post('realizar-reparacion')
+  async createAndUpdateInventory(@Body() reparacion: Reparacion): Promise<Reparacion> {
+    return this.reparacionService.createAndUpdateInventory(reparacion);
   }
 
   @Put(':id')
