@@ -52,4 +52,14 @@ export class ReparacionService {
   async count(): Promise<number> {
     return await this.reparacionRepository.count();
   }
+
+  async countByMonth(): Promise<{ month: number; total: number }[]> {
+    return await this.reparacionRepository
+      .createQueryBuilder('reparacion')
+      .select('MONTH(reparacion.fecha_reparacion)', 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy('MONTH(reparacion.fecha_reparacion)')
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
 }

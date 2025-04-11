@@ -25,6 +25,11 @@ export class ReparacionController {
     return { total };
   }
 
+  @Get('total-por-mes')
+  async countByMonth(): Promise<{ month: number; total: number }[]> {
+    return await this.reparacionService.countByMonth();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Reparacion | null> {
     return this.reparacionService.findOne(id);
