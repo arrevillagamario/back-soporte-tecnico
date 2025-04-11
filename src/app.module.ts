@@ -24,7 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      host: 'DESKTOP-FEGH0CR', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
+      host: 'DESKTOP-FIQDVUP', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
       port: 1433,
       username: 'sa', // Usuario que aparece en tu imagen
       password: '12345', // La contraseña que usas en SSMS
