@@ -46,4 +46,13 @@ export class ComponenteService {
       throw new NotFoundException(`Componente con ID ${id} no encontrado`);
     }
   }
+
+  // Obtener el valor total del inventario
+  async getTotalInventoryValue(): Promise<number> {
+    const componentes = await this.componenteRepository.find();
+    return componentes.reduce((total, componente) => {
+      const componenteTotal = (componente.precio || 0) * (componente.cantidad || 0);
+      return total + componenteTotal;
+    }, 0);
+  }
 }

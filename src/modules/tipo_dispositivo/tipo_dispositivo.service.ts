@@ -18,12 +18,17 @@ export class TipoDispositivoService {
 
   // Obtener todos los tipos de dispositivos
   async findAll(): Promise<TipoDispositivo[]> {
-    return await this.tipoDispositivoRepository.find();
+    return await this.tipoDispositivoRepository.find({
+      relations: ['usuarioAsignado', 'tickets'], // Incluye las relaciones necesarias
+    });
   }
 
   // Obtener un tipo de dispositivo por ID
   async findOne(id: number): Promise<TipoDispositivo> {
-    const tipoDispositivo = await this.tipoDispositivoRepository.findOne({ where: { dispositivo_id: id } });
+    const tipoDispositivo = await this.tipoDispositivoRepository.findOne({
+      where: { dispositivo_id: id },
+      relations: ['usuarioAsignado', 'tickets'], // Incluye las relaciones necesarias
+    });
     if (!tipoDispositivo) {
       throw new NotFoundException(`Tipo de dispositivo con ID ${id} no encontrado`);
     }

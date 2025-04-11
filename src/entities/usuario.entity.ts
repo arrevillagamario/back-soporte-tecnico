@@ -12,6 +12,7 @@ import { Reparacion } from './reparacion.entity';
 import { ComentarioTicket } from './comentario_ticket.entity';
 import { CambioEstado } from './cambio_estado.entity';
 import { MovimientoComponente } from './movimiento_componente.entity';
+import { TipoDispositivo } from './tipo_dispositivo.entity';
 
 @Entity('usuarios')
 export class Usuario {
@@ -54,4 +55,8 @@ export class Usuario {
     (movimiento) => movimiento.usuarioRegistra,
   )
   movimientosComponentes: MovimientoComponente[];
+
+  // Relación inversa con `TipoDispositivo`
+  @OneToMany(() => TipoDispositivo, (dispositivo) => dispositivo.usuarioAsignado)
+  dispositivosAsignados: TipoDispositivo[];
 }
