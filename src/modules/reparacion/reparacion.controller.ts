@@ -18,7 +18,11 @@ export class ReparacionController {
   async findAll(): Promise<Reparacion[]> {
     return this.reparacionService.findAll();
   }
-
+  @Get('costo-total')
+  async getTotalRepairCost(): Promise<{ total: number }> {
+    const total = await this.reparacionService.getTotalRepairCost();
+    return { total };
+  }
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Reparacion | null> {
     return this.reparacionService.findOne(id);
@@ -41,4 +45,6 @@ export class ReparacionController {
   async remove(@Param('id') id: number): Promise<void> {
     return this.reparacionService.remove(id);
   }
+
+  
 }

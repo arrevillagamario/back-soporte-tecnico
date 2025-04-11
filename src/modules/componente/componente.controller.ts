@@ -24,7 +24,11 @@ export class ComponenteController {
   async findAll(): Promise<Componente[]> {
     return await this.componenteService.findAll();
   }
-
+  @Get('total-inventario')
+  async getTotalInventoryValue(): Promise<{ total: number }> {
+    const total = await this.componenteService.getTotalInventoryValue();
+    return { total };
+  }
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Componente> {
     const componente = await this.componenteService.findOne(id);
@@ -33,6 +37,8 @@ export class ComponenteController {
     }
     return componente;
   }
+
+  
 
   @Put(':id')
   async update(

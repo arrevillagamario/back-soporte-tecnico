@@ -18,11 +18,11 @@ export class Componente {
   @Column({ length: 100 })
   nombre: string;
 
-  @Column('int')
-  cantidad: number;
-
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
   precio: number;
+
+  @Column('int', { nullable: true })
+  cantidad: number;
 
   @ManyToOne(() => Proveedor, (proveedor) => proveedor.componentes)
   @JoinColumn({ name: 'proveedor_id' })

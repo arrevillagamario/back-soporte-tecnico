@@ -48,4 +48,19 @@ export class ReparacionService {
   async remove(id: number): Promise<void> {
     await this.reparacionRepository.delete(id);
   }
+
+  async getTotalRepairCost(): Promise<number> {
+    const reparaciones = await this.reparacionRepository.find({
+      relations: ['componentes', 'componentes.componente'],
+    });
+
+    return reparaciones.reduce((total, reparacion) => {
+      const reparacionCost = reparacion.componentes.reduce((subtotal, reparacionComponente) => {
+        const costoComponente =
+          (reparacionComponente.componente?.precio || 0) * (reparacionComponente.cantidad_usada || 0);
+        return subtotal + costoComponente;
+      }, 0);
+      return total + reparacionCost;
+    }, 0);
+  }
 }
