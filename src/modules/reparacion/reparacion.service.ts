@@ -163,4 +163,11 @@ export class ReparacionService {
       .orderBy('month', 'ASC')
       .getRawMany();
   }
+
+  async findByTecnico(tecnicoId: number): Promise<Reparacion[]> {
+    return this.reparacionRepository.find({
+      where: { tecnico: { usuario_id: tecnicoId } },
+      relations: ['ticket', 'tecnico', 'componentes'],
+    });
+  }
 }

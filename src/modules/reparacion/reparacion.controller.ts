@@ -45,6 +45,13 @@ export class ReparacionController {
     return this.reparacionService.findOne(id);
   }
 
+  @Get('tecnico/:tecnicoId')
+  async findByTecnico(
+    @Param('tecnicoId') tecnicoId: number,
+  ): Promise<Reparacion[]> {
+    return this.reparacionService.findByTecnico(tecnicoId);
+  }
+
   @Post()
   async create(@Body() reparacion: Reparacion): Promise<Reparacion> {
     return this.reparacionService.create(reparacion);
