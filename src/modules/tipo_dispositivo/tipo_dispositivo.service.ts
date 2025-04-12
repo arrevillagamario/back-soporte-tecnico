@@ -18,21 +18,17 @@ export class TipoDispositivoService {
 
   // Obtener todos los tipos de dispositivos
   async findAll(): Promise<TipoDispositivo[]> {
-    return await this.tipoDispositivoRepository.find({
-      relations: ['usuarioAsignado', 'tickets'], // Incluye las relaciones necesarias
+    return this.tipoDispositivoRepository.find({
+      relations: ['usuarioAsignado', 'tickets'], // Incluye relaciones necesarias
     });
   }
 
   // Obtener un tipo de dispositivo por ID
-  async findOne(id: number): Promise<TipoDispositivo> {
-    const tipoDispositivo = await this.tipoDispositivoRepository.findOne({
+  async findOne(id: number): Promise<TipoDispositivo | null> {
+    return this.tipoDispositivoRepository.findOne({
       where: { dispositivo_id: id },
-      relations: ['usuarioAsignado', 'tickets'], // Incluye las relaciones necesarias
+      relations: ['usuarioAsignado', 'tickets'],
     });
-    if (!tipoDispositivo) {
-      throw new NotFoundException(`Tipo de dispositivo con ID ${id} no encontrado`);
-    }
-    return tipoDispositivo;
   }
 
   // Actualizar un tipo de dispositivo por ID
@@ -51,5 +47,32 @@ export class TipoDispositivoService {
     if (result.affected === 0) {
       throw new NotFoundException(`Tipo de dispositivo con ID ${id} no encontrado`);
     }
+  }
+
+  // Obtener dispositivos por categoría
+  async getDevicesByCategory(): Promise<{ categoria: string; total: number }[]> {
+    // Replace the following with actual logic to fetch devices by category
+    return [
+      { categoria: 'Categoria1', total: 10 },
+      { categoria: 'Categoria2', total: 5 },
+    ];
+  }
+
+  // Obtener el total de dispositivos
+  async getTotalDevices(): Promise<number> {
+    const total = await this.tipoDispositivoRepository.count();
+    console.log('Total dispositivos:', total); // Log para depuración
+    return total;
+  }
+
+  // Obtener dispositivos en reparación
+  async getDevicesInRepair(): Promise<TipoDispositivo[]> {
+    return this.tipoDispositivoRepository
+      .createQueryBuilder('tipoDispositivo')
+      .leftJoinAndSelect('tipoDispositivo.tickets', 'tickets')
+      .leftJoinAndSelect('tipoDispositivo.usuarioAsignado', 'usuarioAsignado')
+      .leftJoinAndSelect('tickets.estado_actual', 'estado_actual') // Relación con la tabla estado_ticket
+      .where('tickets.estado_actual_id = :estadoId', { estadoId: 1 }) // Ajusta el valor 1 al ID correspondiente a "en_reparacion"
+      .getMany();
   }
 }

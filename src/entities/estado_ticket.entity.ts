@@ -9,6 +9,6 @@ export class EstadoTicket {
   @Column({ length: 100 })
   estado: string; // Mapea a la columna `estado`
 
-  @OneToMany(() => Ticket, (ticket) => ticket.estado)
+  @OneToMany(() => Ticket, (ticket) => ticket.estado_actual)
   tickets: Ticket[]; // Relación con la entidad `Ticket`
 }
