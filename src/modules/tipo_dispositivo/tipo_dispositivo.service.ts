@@ -51,11 +51,12 @@ export class TipoDispositivoService {
 
   // Obtener dispositivos por categoría
   async getDevicesByCategory(): Promise<{ categoria: string; total: number }[]> {
-    // Replace the following with actual logic to fetch devices by category
-    return [
-      { categoria: 'Categoria1', total: 10 },
-      { categoria: 'Categoria2', total: 5 },
-    ];
+    return this.tipoDispositivoRepository
+      .createQueryBuilder('tipo_dispositivo')
+      .select('tipo_dispositivo.tipo', 'categoria') // Selecciona la columna `tipo` como `categoria`
+      .addSelect('COUNT(*)', 'total') // Cuenta el número de dispositivos por categoría
+      .groupBy('tipo_dispositivo.tipo') // Agrupa por la columna `tipo`
+      .getRawMany(); // Devuelve los resultados en formato plano
   }
 
   // Obtener el total de dispositivos
