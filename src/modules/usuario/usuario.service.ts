@@ -15,6 +15,7 @@ export class UsuarioService {
   async findByEmail(email: string): Promise<Usuario | null> {
     return this.usuarioRepository.findOne({
       where: { email },
+      relations: ['rol'], // Incluye la relación con Rol si es necesario
       select: ['usuario_id', 'email', 'password', 'nombre', 'apellido'], // Incluye solo los campos necesarios
     });
   }

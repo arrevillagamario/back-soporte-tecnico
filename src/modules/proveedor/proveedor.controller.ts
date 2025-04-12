@@ -16,13 +16,21 @@ export class ProveedorController {
   constructor(private readonly proveedorService: ProveedorService) {}
 
   @Post()
-  async create(@Body() createProveedorDto: Partial<Proveedor>): Promise<Proveedor> {
+  async create(
+    @Body() createProveedorDto: Partial<Proveedor>,
+  ): Promise<Proveedor> {
     return await this.proveedorService.create(createProveedorDto);
   }
 
   @Get()
   async findAll(): Promise<Proveedor[]> {
     return await this.proveedorService.findAll();
+  }
+
+  @Get('total')
+  async count(): Promise<{ total: number }> {
+    const total = await this.proveedorService.count();
+    return { total };
   }
 
   @Get(':id')

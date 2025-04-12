@@ -28,6 +28,18 @@ export class ReparacionController {
     const promedio = await this.reparacionService.getAverageRepairCost();
     return { promedio };
   }
+
+  @Get('total')
+  async count(): Promise<{ total: number }> {
+    const total = await this.reparacionService.count();
+    return { total };
+  }
+
+  @Get('total-por-mes')
+  async countByMonth(): Promise<{ month: number; total: number }[]> {
+    return await this.reparacionService.countByMonth();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Reparacion | null> {
     return this.reparacionService.findOne(id);
@@ -39,7 +51,9 @@ export class ReparacionController {
   }
 
   @Post('realizar-reparacion')
-  async createAndUpdateInventory(@Body() reparacion: Reparacion): Promise<Reparacion> {
+  async createAndUpdateInventory(
+    @Body() reparacion: Reparacion,
+  ): Promise<Reparacion> {
     return this.reparacionService.createAndUpdateInventory(reparacion);
   }
 
@@ -55,6 +69,4 @@ export class ReparacionController {
   async remove(@Param('id') id: number): Promise<void> {
     return this.reparacionService.remove(id);
   }
-
-  
 }

@@ -19,6 +19,21 @@ export class TicketController {
     return this.ticketService.findAll();
   }
 
+  @Get('total')
+  async countTotal(): Promise<number> {
+    return this.ticketService.countTotal();
+  }
+
+  @Get('total-por-categoria')
+  async countByCategory(): Promise<{ categoria: string; total: number }[]> {
+    return this.ticketService.countByCategory();
+  }
+
+  @Get('total-por-estado')
+  async countByState(): Promise<{ estado: string; total: number }[]> {
+    return this.ticketService.countByState();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Ticket | null> {
     return this.ticketService.findOne(id);
