@@ -164,6 +164,13 @@ export class ReparacionService {
       .getRawMany();
   }
 
+  async findByTecnico(tecnicoId: number): Promise<Reparacion[]> {
+    return this.reparacionRepository.find({
+      where: { tecnico: { usuario_id: tecnicoId } },
+      relations: ['ticket', 'tecnico', 'componentes'],
+    });
+  }
+
   async countClosedRepairs(): Promise<number> {
     const result = await this.reparacionRepository
       .createQueryBuilder('reparacion')
