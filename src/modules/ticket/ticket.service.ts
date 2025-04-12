@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Ticket } from '../../entities/ticket.entity';
 
 @Injectable()
@@ -23,6 +23,9 @@ export class TicketService {
         'comentarios',
         'cambiosEstado',
       ],
+      order: {
+        fecha_registro: 'DESC', // Ordena por fecha de registro en orden descendente
+      },
     });
   }
 
@@ -86,5 +89,76 @@ export class TicketService {
       .addSelect('COUNT(ticket.ticket_id)', 'total')
       .groupBy('estado.estado') // Cambiado a 'estado.estado'
       .getRawMany();
+  }
+
+  async countTicketsByStatus(): Promise<{ activos: number; inactivos: number }> {
+    const activos = await this.ticketRepository.count({
+      where: {
+        estado_actual: {
+          estado: In(['Abierto', 'En Progreso', 'En Espera', 'Resuelto']),
+        },
+      },
+      relations: ['estado_actual'],
+    });
+
+    const inactivos = await this.ticketRepository.count({
+      where: {
+        estado_actual: {
+          estado: 'Cerrado',
+        },
+      },
+      relations: ['estado_actual'],
+    });
+
+    return { activos, inactivos };
+  }
+
+  async findTicketsByClient(usuarioId: number): Promise<Ticket[]> {
+    return this.ticketRepository.find({
+      where: {
+        cliente: {
+          usuario_id: usuarioId,
+          rol: {
+            rol: 'cliente', // Asegúrate de que el rol sea "cliente"
+          },
+        },
+      },
+      relations: [
+        'categoria',
+        'prioridad',
+        'dispositivo',
+        'tecnico',
+        'cliente',
+        'estado',
+        'reparaciones',
+        'comentarios',
+      ],
+      order: {
+        fecha_registro: 'DESC', // Ordena por fecha de registro en orden descendente
+      },
+    });
+  }
+
+  async findTicketsByTechnician(tecnicoId: number): Promise<Ticket[]> {
+    return this.ticketRepository.find({
+      where: {
+        tecnico: {
+          usuario_id: tecnicoId,
+        },
+      },
+      relations: [
+        'categoria',
+        'prioridad',
+        'dispositivo',
+        'tecnico',
+        'cliente',
+        'estado',
+        'reparaciones',
+        'comentarios',
+      ],
+      order: {
+        fecha_registro: 'DESC', // Ordena por fecha de registro en orden descendente
+      },
+    });
   }
 }

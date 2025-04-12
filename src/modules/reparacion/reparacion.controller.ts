@@ -40,6 +40,12 @@ export class ReparacionController {
     return await this.reparacionService.countByMonth();
   }
 
+  @Get('total-cerradas')
+  async countClosedRepairs(): Promise<{ total: number }> {
+    const total = await this.reparacionService.countClosedRepairs();
+    return { total };
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Reparacion | null> {
     return this.reparacionService.findOne(id);

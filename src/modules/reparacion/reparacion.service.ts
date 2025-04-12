@@ -163,4 +163,17 @@ export class ReparacionService {
       .orderBy('month', 'ASC')
       .getRawMany();
   }
+
+  async countClosedRepairs(): Promise<number> {
+    const result = await this.reparacionRepository
+      .createQueryBuilder('reparacion')
+      .leftJoin('reparacion.ticket', 'ticket') // Relación con la tabla ticket
+      .leftJoin('ticket.estado_actual', 'estado_actual') // Relación con la tabla estado_ticket
+      .where('estado_actual.estado = :estado', { estado: 'Cerrado' }) // Filtra por estado "Cerrado"
+      .select('ticket.ticket_id') // Selecciona solo los tickets únicos
+      .distinct(true) // Asegura que no se cuenten duplicados
+      .getRawMany(); // Devuelve los datos
+
+    return result.length; // Devuelve el número de tickets únicos
+  }
 }
