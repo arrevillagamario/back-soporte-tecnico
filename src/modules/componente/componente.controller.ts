@@ -16,7 +16,9 @@ export class ComponenteController {
   constructor(private readonly componenteService: ComponenteService) {}
 
   @Post()
-  async create(@Body() createComponenteDto: Partial<Componente>): Promise<Componente> {
+  async create(
+    @Body() createComponenteDto: Partial<Componente>,
+  ): Promise<Componente> {
     return await this.componenteService.create(createComponenteDto);
   }
 
@@ -29,6 +31,11 @@ export class ComponenteController {
     const total = await this.componenteService.getTotalInventoryValue();
     return { total };
   }
+  @Get('total-componentes')
+  async getTotalComponentes(): Promise<{ total: number }> {
+    const total = await this.componenteService.getTotalComponentes();
+    return { total };
+  }
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Componente> {
     const componente = await this.componenteService.findOne(id);
@@ -37,8 +44,6 @@ export class ComponenteController {
     }
     return componente;
   }
-
-  
 
   @Put(':id')
   async update(

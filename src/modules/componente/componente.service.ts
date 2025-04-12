@@ -30,7 +30,10 @@ export class ComponenteService {
   }
 
   // Actualizar un componente por ID
-  async update(id: number, updateComponenteDto: Partial<Componente>): Promise<Componente> {
+  async update(
+    id: number,
+    updateComponenteDto: Partial<Componente>,
+  ): Promise<Componente> {
     await this.componenteRepository.update(id, updateComponenteDto);
     const updatedComponente = await this.findOne(id);
     if (!updatedComponente) {
@@ -51,8 +54,18 @@ export class ComponenteService {
   async getTotalInventoryValue(): Promise<number> {
     const componentes = await this.componenteRepository.find();
     return componentes.reduce((total, componente) => {
-      const componenteTotal = (componente.precio || 0) * (componente.cantidad || 0);
+      const componenteTotal =
+        (componente.precio || 0) * (componente.cantidad || 0);
       return total + componenteTotal;
     }, 0);
+  }
+
+  // Obtener el total de componentes disponibles
+  async getTotalComponentes(): Promise<number> {
+    const componentes = await this.componenteRepository.find();
+    return componentes.reduce(
+      (total, componente) => total + (componente.cantidad || 0),
+      0,
+    );
   }
 }
