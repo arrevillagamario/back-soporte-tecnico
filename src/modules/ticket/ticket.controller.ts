@@ -44,6 +44,13 @@ export class TicketController {
     return this.ticketService.countOpenAndClosed();
   }
 
+  @Get('estado-por-mes')
+  async contarAbiertosYCerradosPorMes(): Promise<
+    { mes: number; abiertos: number; cerrados: number }[]
+  > {
+    return this.ticketService.contarAbiertosYCerradosPorMes();
+  }
+
   @Get('hoy')
   async findTicketsToday(): Promise<Ticket[]> {
     return this.ticketService.findTicketsToday();

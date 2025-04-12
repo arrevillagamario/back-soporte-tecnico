@@ -137,4 +137,29 @@ export class TicketService {
 
     return { abiertos, cerrados };
   }
+
+  async contarAbiertosYCerradosPorMes(): Promise<
+    { mes: number; abiertos: number; cerrados: number }[]
+  > {
+    const resultado = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .select('MONTH(ticket.fecha_registro)', 'mes')
+      .addSelect(
+        `SUM(CASE WHEN ticket.estado_actual_id = 1 THEN 1 ELSE 0 END)`,
+        'abiertos',
+      )
+      .addSelect(
+        `SUM(CASE WHEN ticket.estado_actual_id = 5 THEN 1 ELSE 0 END)`,
+        'cerrados',
+      )
+      .groupBy('MONTH(ticket.fecha_registro)')
+      .orderBy('mes', 'ASC')
+      .getRawMany();
+
+    return resultado.map((fila) => ({
+      mes: parseInt(fila.mes, 10),
+      abiertos: parseInt(fila.abiertos, 10),
+      cerrados: parseInt(fila.cerrados, 10),
+    }));
+  }
 }
