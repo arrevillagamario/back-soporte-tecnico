@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, BadRequestException } from '@nestjs/common';
 import { TipoDispositivoService } from './tipo_dispositivo.service';
 import { TipoDispositivo } from '../../entities/tipo_dispositivo.entity';
 
@@ -11,14 +11,34 @@ export class TipoDispositivoController {
     return this.tipoDispositivoService.create(tipoDispositivo);
   }
 
+  @Get('total')
+  async getTotalDevices(): Promise<{ total: number }> {
+    const total = await this.tipoDispositivoService.getTotalDevices();
+    return { total };
+  }
+
+  @Get('por-categoria')
+  async getDevicesByCategory(): Promise<{ categoria: string; total: number }[]> {
+    return this.tipoDispositivoService.getDevicesByCategory();
+  }
+
+  @Get('en-reparacion')
+  async getDevicesInRepair(): Promise<TipoDispositivo[]> {
+    return this.tipoDispositivoService.getDevicesInRepair();
+  }
+
   @Get()
   async findAll(): Promise<TipoDispositivo[]> {
     return this.tipoDispositivoService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<TipoDispositivo | null> {
-    return this.tipoDispositivoService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<TipoDispositivo | null> {
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido: ${id}`);
+    }
+    return this.tipoDispositivoService.findOne(numericId);
   }
 
   @Put(':id')

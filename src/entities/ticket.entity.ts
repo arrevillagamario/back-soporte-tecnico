@@ -62,6 +62,10 @@ export class Ticket {
   @JoinColumn({ name: 'estado_actual_id' })
   estado: EstadoTicket; // Relación con la entidad `EstadoTicket`
 
+  @ManyToOne(() => EstadoTicket, (estado) => estado.tickets)
+  @JoinColumn({ name: 'estado_actual_id' })
+  estado_actual: EstadoTicket;
+
   @OneToMany(() => Reparacion, (reparacion) => reparacion.ticket)
   reparaciones: Reparacion[];
 

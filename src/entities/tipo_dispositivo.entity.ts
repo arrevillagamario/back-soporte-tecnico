@@ -16,10 +16,10 @@ export class TipoDispositivo {
   @Column({ length: 100 })
   marca_modelo: string; // Nueva columna `marca_modelo`
 
+  @OneToMany(() => Ticket, (ticket) => ticket.dispositivo)
+  tickets: Ticket[];
+
   @ManyToOne(() => Usuario, (usuario) => usuario.dispositivosAsignados, { nullable: true })
   @JoinColumn({ name: 'usuario_asignado_id' })
-  usuarioAsignado: Usuario; // Relación con la tabla `usuarios`
-
-  @OneToMany(() => Ticket, (ticket) => ticket.dispositivo)
-  tickets: Ticket[]; // Relación con la entidad `Ticket` (si aplica)
+  usuarioAsignado: Usuario;
 }
