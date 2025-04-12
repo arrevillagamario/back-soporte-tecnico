@@ -192,12 +192,12 @@ export class TicketService {
       .createQueryBuilder('ticket')
       .select('MONTH(ticket.fecha_registro)', 'mes')
       .addSelect(
-        `SUM(CASE WHEN ticket.estado_actual_id = 1 THEN 1 ELSE 0 END)`,
-        'abiertos',
+        `SUM(CASE WHEN ticket.estado_actual_id IN (1, 2, 3, 4) THEN 1 ELSE 0 END)`,
+        'abiertos', // Considera los estados 1, 2, 3 y 4 como "abiertos"
       )
       .addSelect(
         `SUM(CASE WHEN ticket.estado_actual_id = 5 THEN 1 ELSE 0 END)`,
-        'cerrados',
+        'cerrados', // Solo considera el estado 5 como "cerrados"
       )
       .groupBy('MONTH(ticket.fecha_registro)')
       .orderBy('mes', 'ASC')
