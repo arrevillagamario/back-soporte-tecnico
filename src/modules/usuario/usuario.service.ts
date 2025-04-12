@@ -29,4 +29,11 @@ export class UsuarioService {
   async findRolById(rol_id: number): Promise<Rol | null> {
     return this.usuarioRepository.manager.findOne(Rol, { where: { rol_id } });
   }
+
+  async findAll(): Promise<Usuario[]> {
+    return this.usuarioRepository.find({
+      relations: ['rol'], // Incluye la relación con el rol
+      select: ['usuario_id', 'nombre', 'apellido', 'email'], // Excluye el campo password
+    });
+  }
 }
