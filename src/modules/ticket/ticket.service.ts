@@ -91,7 +91,10 @@ export class TicketService {
       .getRawMany();
   }
 
-  async countTicketsByStatus(): Promise<{ activos: number; inactivos: number }> {
+  async countTicketsByStatus(): Promise<{
+    activos: number;
+    inactivos: number;
+  }> {
     const activos = await this.ticketRepository.count({
       where: {
         estado_actual: {
@@ -160,5 +163,25 @@ export class TicketService {
         fecha_registro: 'DESC', // Ordena por fecha de registro en orden descendente
       },
     });
+  }
+  async countOpenAndClosed(): Promise<{ abiertos: number; cerrados: number }> {
+    const abiertos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :openState', { openState: 1 })
+      .getCount();
+
+    const cerrados = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :closedState', { closedState: 5 })
+      .getCount();
+
+    return { abiertos, cerrados };
+  }
+
+  async countByStateId(stateId: number): Promise<number> {
+    return this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :stateId', { stateId })
+      .getCount();
   }
 }

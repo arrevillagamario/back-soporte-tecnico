@@ -34,8 +34,16 @@ export class TicketController {
     return this.ticketService.countByState();
   }
 
+  @Get('estado/:estadoId')
+  async countByStateId(@Param('estadoId') estadoId: number): Promise<number> {
+    return this.ticketService.countByStateId(estadoId);
+  }
+
   @Get('conteo-estado')
-  async countTicketsByStatus(): Promise<{ activos: number; inactivos: number }> {
+  async countTicketsByStatus(): Promise<{
+    activos: number;
+    inactivos: number;
+  }> {
     return this.ticketService.countTicketsByStatus();
   }
 
