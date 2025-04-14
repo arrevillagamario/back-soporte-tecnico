@@ -95,23 +95,17 @@ export class TicketService {
     activos: number;
     inactivos: number;
   }> {
-    const activos = await this.ticketRepository.count({
-      where: {
-        estado_actual: {
-          estado: In(['Abierto', 'En Progreso', 'En Espera', 'Resuelto']),
-        },
-      },
-      relations: ['estado_actual'],
-    });
+    const activos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id IN (:...activeStates)', {
+        activeStates: [1, 2, 3],
+      })
+      .getCount();
 
-    const inactivos = await this.ticketRepository.count({
-      where: {
-        estado_actual: {
-          estado: 'Cerrado',
-        },
-      },
-      relations: ['estado_actual'],
-    });
+    const inactivos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :resolvedState', { resolvedState: 4 })
+      .getCount();
 
     return { activos, inactivos };
   }
@@ -164,29 +158,31 @@ export class TicketService {
       },
     });
   }
-  async countOpenAndClosed(): Promise<{ abiertos: number; cerrados: number }> {
-    const abiertos = await this.ticketRepository
-      .createQueryBuilder('ticket')
-      .where('ticket.estado_actual_id = :openState', { openState: 1 })
-      .getCount();
-
-    const cerrados = await this.ticketRepository
-      .createQueryBuilder('ticket')
-      .where('ticket.estado_actual_id = :closedState', { closedState: 5 })
-      .getCount();
-
-    return { abiertos, cerrados };
-  }
 
   async countByStateId(stateId: number): Promise<number> {
-    return this.ticketRepository
-      .createQueryBuilder('ticket')
-      .where('ticket.estado_actual_id = :stateId', { stateId })
-      .getCount();
+    if ([1, 2, 3].includes(stateId)) {
+      // Estados activos: Abierto, En Progreso, En Espera
+      return this.ticketRepository
+        .createQueryBuilder('ticket')
+        .where('ticket.estado_actual_id IN (:...activeStates)', {
+          activeStates: [1, 2, 3],
+        })
+        .getCount();
+    } else if (stateId === 4) {
+      // Estado inactivo: Resuelto
+      return this.ticketRepository
+        .createQueryBuilder('ticket')
+        .where('ticket.estado_actual_id = :resolvedState', { resolvedState: 4 })
+        .getCount();
+    } else {
+      throw new Error(
+        'Estado no válido. Solo se permiten los estados 1, 2, 3 y 4.',
+      );
+    }
   }
 
-  async contarAbiertosYCerradosPorMes(): Promise<
-    { mes: number; abiertos: number; cerrados: number }[]
+  async contarAbiertosYResueltosPorMes(): Promise<
+    { mes: number; abiertos: number; resueltos: number }[]
   > {
     const resultado = await this.ticketRepository
       .createQueryBuilder('ticket')
@@ -196,8 +192,8 @@ export class TicketService {
         'abiertos', // Considera los estados 1, 2, 3 y 4 como "abiertos"
       )
       .addSelect(
-        `SUM(CASE WHEN ticket.estado_actual_id = 5 THEN 1 ELSE 0 END)`,
-        'cerrados', // Solo considera el estado 5 como "cerrados"
+        `SUM(CASE WHEN ticket.estado_actual_id = 4 THEN 1 ELSE 0 END)`,
+        'resueltos', // Solo considera el estado 4 como "resueltos"
       )
       .groupBy('MONTH(ticket.fecha_registro)')
       .orderBy('mes', 'ASC')
@@ -206,7 +202,24 @@ export class TicketService {
     return resultado.map((fila) => ({
       mes: parseInt(fila.mes, 10),
       abiertos: parseInt(fila.abiertos, 10),
-      cerrados: parseInt(fila.cerrados, 10),
+      resueltos: parseInt(fila.resueltos, 10),
     }));
+  }
+
+  async countOpenAndResolved(): Promise<{
+    abiertos: number;
+    resueltos: number;
+  }> {
+    const abiertos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :openState', { openState: 1 })
+      .getCount();
+
+    const resueltos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :resolvedState', { resolvedState: 4 })
+      .getCount();
+
+    return { abiertos, resueltos };
   }
 }

@@ -48,15 +48,18 @@ export class TicketController {
   }
 
   @Get('estado')
-  async countOpenAndClosed(): Promise<{ abiertos: number; cerrados: number }> {
-    return this.ticketService.countOpenAndClosed();
+  async countOpenAndResolved(): Promise<{
+    abiertos: number;
+    resueltos: number;
+  }> {
+    return this.ticketService.countOpenAndResolved();
   }
 
   @Get('estado-por-mes')
-  async contarAbiertosYCerradosPorMes(): Promise<
-    { mes: number; abiertos: number; cerrados: number }[]
+  async contarAbiertosYResueltosPorMes(): Promise<
+    { mes: number; abiertos: number; resueltos: number }[]
   > {
-    return this.ticketService.contarAbiertosYCerradosPorMes();
+    return this.ticketService.contarAbiertosYResueltosPorMes();
   }
 
   @Get(':id')
