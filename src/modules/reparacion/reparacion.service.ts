@@ -96,6 +96,30 @@ export class ReparacionService {
     }, 0);
   }
 
+  async getRepairCost(reparacionId: number): Promise<number> {
+    // Busca la reparación junto con sus componentes y la información del componente
+    const reparacion = await this.reparacionRepository.findOne({
+      where: { reparacion_id: reparacionId },
+      relations: ['componentes', 'componentes.componente'],
+    });
+  
+    // Si la reparación no existe, puedes decidir qué hacer:
+    // lanzar excepción, retornar 0, etc. Aquí ejemplo lanzando excepción:
+    if (!reparacion) {
+      throw new BadRequestException(`La reparación con ID ${reparacionId} no existe.`);
+    }
+  
+    // Calcula el costo total sumando (precio * cantidad_usada) de cada componente
+    const totalCost = reparacion.componentes.reduce((acc, reparacionComponente) => {
+      const precio = reparacionComponente.componente?.precio || 0;
+      const cantidadUsada = reparacionComponente.cantidad_usada || 0;
+      return acc + (precio * cantidadUsada);
+    }, 0);
+  
+    return totalCost;
+  }
+  
+
   async getAverageRepairCost(): Promise<number> {
     const reparaciones = await this.reparacionRepository.find({
       relations: ['componentes', 'componentes.componente'],
@@ -182,5 +206,22 @@ export class ReparacionService {
       .getRawMany(); // Devuelve los datos
 
     return result.length; // Devuelve el número de tickets únicos
+  }
+
+  async calculateRepairCosts(): Promise<{ reparacionId: number; costo: number }[]> {
+    const reparaciones = await this.reparacionRepository.find({
+      relations: ['componentes', 'componentes.componente'],
+    });
+
+    return reparaciones.map((reparacion) => {
+      const costo = reparacion.componentes.reduce((total, componenteUsado) => {
+        return total + componenteUsado.componente.precio * componenteUsado.cantidad_usada;
+      }, 0);
+
+      return {
+        reparacionId: reparacion.reparacion_id,
+        costo,
+      };
+    });
   }
 }
