@@ -10,4 +10,9 @@ export class UsuarioController {
   async findAll(): Promise<Usuario[]> {
     return this.usuarioService.findAll();
   }
+
+  @Get('tecnicos')
+  async obtenerTecnicos(): Promise<Usuario[]> {
+    return this.usuarioService.obtenerTecnicos();
+  }
 }

@@ -36,4 +36,12 @@ export class UsuarioService {
       select: ['usuario_id', 'nombre', 'apellido', 'email'], // Excluye el campo password
     });
   }
+
+  async obtenerTecnicos(): Promise<Usuario[]> {
+    return this.usuarioRepository.find({
+      where: { rol: { rol_id: 2 } },
+      relations: ['rol'], // Incluye la relación con el rol
+      select: ['usuario_id', 'nombre', 'apellido', 'email'], // Excluye el campo password
+    });
+  }
 }

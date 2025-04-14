@@ -91,7 +91,10 @@ export class TicketService {
       .getRawMany();
   }
 
-  async countTicketsByStatus(): Promise<{ activos: number; inactivos: number }> {
+  async countTicketsByStatus(): Promise<{
+    activos: number;
+    inactivos: number;
+  }> {
     const activos = await this.ticketRepository.count({
       where: {
         estado_actual: {
@@ -160,5 +163,50 @@ export class TicketService {
         fecha_registro: 'DESC', // Ordena por fecha de registro en orden descendente
       },
     });
+  }
+  async countOpenAndClosed(): Promise<{ abiertos: number; cerrados: number }> {
+    const abiertos = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :openState', { openState: 1 })
+      .getCount();
+
+    const cerrados = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :closedState', { closedState: 5 })
+      .getCount();
+
+    return { abiertos, cerrados };
+  }
+
+  async countByStateId(stateId: number): Promise<number> {
+    return this.ticketRepository
+      .createQueryBuilder('ticket')
+      .where('ticket.estado_actual_id = :stateId', { stateId })
+      .getCount();
+  }
+
+  async contarAbiertosYCerradosPorMes(): Promise<
+    { mes: number; abiertos: number; cerrados: number }[]
+  > {
+    const resultado = await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .select('MONTH(ticket.fecha_registro)', 'mes')
+      .addSelect(
+        `SUM(CASE WHEN ticket.estado_actual_id IN (1, 2, 3, 4) THEN 1 ELSE 0 END)`,
+        'abiertos', // Considera los estados 1, 2, 3 y 4 como "abiertos"
+      )
+      .addSelect(
+        `SUM(CASE WHEN ticket.estado_actual_id = 5 THEN 1 ELSE 0 END)`,
+        'cerrados', // Solo considera el estado 5 como "cerrados"
+      )
+      .groupBy('MONTH(ticket.fecha_registro)')
+      .orderBy('mes', 'ASC')
+      .getRawMany();
+
+    return resultado.map((fila) => ({
+      mes: parseInt(fila.mes, 10),
+      abiertos: parseInt(fila.abiertos, 10),
+      cerrados: parseInt(fila.cerrados, 10),
+    }));
   }
 }
