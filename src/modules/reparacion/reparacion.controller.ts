@@ -52,7 +52,7 @@ export class ReparacionController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Reparacion | null> {
+  async findOne(@Param('id') id: number): Promise<any> {
     return this.reparacionService.findOne(id);
   }
 

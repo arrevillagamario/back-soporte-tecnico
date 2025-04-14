@@ -19,11 +19,32 @@ export class ReparacionService {
     });
   }
 
-  async findOne(id: number): Promise<Reparacion | null> {
-    return this.reparacionRepository.findOne({
+  async findOne(id: number): Promise<any> {
+    const reparacion = await this.reparacionRepository.findOne({
       where: { reparacion_id: id },
-      relations: ['ticket', 'tecnico', 'componentes'],
+      relations: ['ticket', 'tecnico', 'componentes', 'componentes.componente'], // Incluye las relaciones necesarias
     });
+
+    if (!reparacion) {
+      throw new BadRequestException(`La reparación con ID ${id} no existe.`);
+    }
+
+    return {
+      reparacion_id: reparacion.reparacion_id,
+      fecha_reparacion: reparacion.fecha_reparacion,
+      ticket: reparacion.ticket,
+      tecnico: reparacion.tecnico,
+      componentes: reparacion.componentes.map((reparacionComponente) => ({
+        reparacion_componente_id: reparacionComponente.reparacion_componente_id,
+        componente: {
+          componente_id: reparacionComponente.componente.componente_id,
+          nombre: reparacionComponente.componente.nombre,
+          precio: reparacionComponente.componente.precio,
+          cantidad_disponible: reparacionComponente.componente.cantidad,
+        },
+        cantidad_usada: reparacionComponente.cantidad_usada,
+      })),
+    };
   }
 
   async create(reparacion: Reparacion): Promise<Reparacion> {
