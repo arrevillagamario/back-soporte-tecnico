@@ -77,4 +77,15 @@ export class UsuarioService {
       relations: ['rol'], // Incluye la relación con el rol
     });
   }
+
+  async findByRol(rolId: number): Promise<Usuario[]> {
+    return this.usuarioRepository.find({
+      where: {
+        rol: {
+          rol_id: rolId, // Filtra por el ID del rol
+        },
+      },
+      relations: ['rol'], // Incluye la relación con el rol
+    });
+  }
 }

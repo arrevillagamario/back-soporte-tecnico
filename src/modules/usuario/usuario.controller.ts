@@ -13,7 +13,17 @@ export class UsuarioController {
 
   @Get('tecnicos')
   async obtenerTecnicos(): Promise<Usuario[]> {
-    return this.usuarioService.obtenerTecnicos();
+    return this.usuarioService.findByRol(2); // ID del rol "Técnico"
+  }
+
+  @Get('clientes')
+  async obtenerClientes(): Promise<Usuario[]> {
+    return this.usuarioService.findByRol(3); // ID del rol "Cliente"
+  }
+
+  @Get('administradores')
+  async obtenerAdministradores(): Promise<Usuario[]> {
+    return this.usuarioService.findByRol(1); // ID del rol "Administrador"
   }
 
   @Get('conteo/clientes')
