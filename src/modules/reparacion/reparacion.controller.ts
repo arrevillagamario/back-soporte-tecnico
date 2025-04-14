@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ReparacionService } from './reparacion.service';
 import { Reparacion } from '../../entities/reparacion.entity';
+import { CreateReparacionDto } from './dto/CreateReparacionDto';
 
 @Controller('reparacion')
 export class ReparacionController {
@@ -53,7 +54,7 @@ export class ReparacionController {
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<any> {
-    return this.reparacionService.findOne(id);
+    return this.reparacionService.findOneDetalle(id);
   }
 
   @Get('tecnico/:tecnicoId')
@@ -64,8 +65,8 @@ export class ReparacionController {
   }
 
   @Post()
-  async create(@Body() reparacion: Reparacion): Promise<Reparacion> {
-    return this.reparacionService.create(reparacion);
+  async create(@Body() reparacion: CreateReparacionDto): Promise<Reparacion> {
+    return this.reparacionService.createReparacion(reparacion);
   }
 
   @Post('realizar-reparacion')
