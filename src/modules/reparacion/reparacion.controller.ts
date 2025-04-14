@@ -29,6 +29,11 @@ export class ReparacionController {
     return { promedio };
   }
 
+  @Get(':id/costo')
+  async getRepairCost(@Param('id') id: number): Promise<number> {
+    return this.reparacionService.getRepairCost(id);
+  }
+
   @Get('total')
   async count(): Promise<{ total: number }> {
     const total = await this.reparacionService.count();
@@ -44,6 +49,11 @@ export class ReparacionController {
   async countClosedRepairs(): Promise<{ total: number }> {
     const total = await this.reparacionService.countClosedRepairs();
     return { total };
+  }
+
+  @Get('costos')
+  async calculateRepairCosts(): Promise<{ reparacionId: number; costo: number }[]> {
+    return this.reparacionService.calculateRepairCosts();
   }
 
   @Get(':id')
