@@ -15,4 +15,22 @@ export class UsuarioController {
   async obtenerTecnicos(): Promise<Usuario[]> {
     return this.usuarioService.obtenerTecnicos();
   }
+
+  @Get('conteo/clientes')
+  async countClientes(): Promise<{ total: number }> {
+    const total = await this.usuarioService.countClientes();
+    return { total };
+  }
+
+  @Get('conteo/tecnicos')
+  async countTecnicos(): Promise<{ total: number }> {
+    const total = await this.usuarioService.countTecnicos();
+    return { total };
+  }
+
+  @Get('conteo/administradores')
+  async countAdministradores(): Promise<{ total: number }> {
+    const total = await this.usuarioService.countAdministradores();
+    return { total };
+  }
 }

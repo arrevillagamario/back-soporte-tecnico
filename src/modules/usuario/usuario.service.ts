@@ -44,4 +44,37 @@ export class UsuarioService {
       select: ['usuario_id', 'nombre', 'apellido', 'email'], // Excluye el campo password
     });
   }
+
+  async countClientes(): Promise<number> {
+    return this.usuarioRepository.count({
+      where: {
+        rol: {
+          rol_id: 3, // ID del rol "Cliente"
+        },
+      },
+      relations: ['rol'], // Incluye la relación con el rol
+    });
+  }
+
+  async countTecnicos(): Promise<number> {
+    return this.usuarioRepository.count({
+      where: {
+        rol: {
+          rol_id: 2, // ID del rol "Técnico"
+        },
+      },
+      relations: ['rol'], // Incluye la relación con el rol
+    });
+  }
+
+  async countAdministradores(): Promise<number> {
+    return this.usuarioRepository.count({
+      where: {
+        rol: {
+          rol_id: 1, // ID del rol "Administrador"
+        },
+      },
+      relations: ['rol'], // Incluye la relación con el rol
+    });
+  }
 }
