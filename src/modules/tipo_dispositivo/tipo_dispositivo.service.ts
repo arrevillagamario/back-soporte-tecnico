@@ -11,8 +11,12 @@ export class TipoDispositivoService {
   ) {}
 
   // Crear un nuevo tipo de dispositivo
-  async create(createTipoDispositivoDto: Partial<TipoDispositivo>): Promise<TipoDispositivo> {
-    const newTipoDispositivo = this.tipoDispositivoRepository.create(createTipoDispositivoDto);
+  async create(
+    createTipoDispositivoDto: Partial<TipoDispositivo>,
+  ): Promise<TipoDispositivo> {
+    const newTipoDispositivo = this.tipoDispositivoRepository.create(
+      createTipoDispositivoDto,
+    );
     return await this.tipoDispositivoRepository.save(newTipoDispositivo);
   }
 
@@ -32,11 +36,16 @@ export class TipoDispositivoService {
   }
 
   // Actualizar un tipo de dispositivo por ID
-  async update(id: number, updateTipoDispositivoDto: Partial<TipoDispositivo>): Promise<TipoDispositivo> {
+  async update(
+    id: number,
+    updateTipoDispositivoDto: Partial<TipoDispositivo>,
+  ): Promise<TipoDispositivo> {
     await this.tipoDispositivoRepository.update(id, updateTipoDispositivoDto);
     const updatedTipoDispositivo = await this.findOne(id);
     if (!updatedTipoDispositivo) {
-      throw new NotFoundException(`Tipo de dispositivo con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Tipo de dispositivo con ID ${id} no encontrado`,
+      );
     }
     return updatedTipoDispositivo;
   }
@@ -45,12 +54,16 @@ export class TipoDispositivoService {
   async remove(id: number): Promise<void> {
     const result = await this.tipoDispositivoRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Tipo de dispositivo con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Tipo de dispositivo con ID ${id} no encontrado`,
+      );
     }
   }
 
   // Obtener dispositivos por categoría
-  async getDevicesByCategory(): Promise<{ categoria: string; total: number }[]> {
+  async getDevicesByCategory(): Promise<
+    { categoria: string; total: number }[]
+  > {
     return this.tipoDispositivoRepository
       .createQueryBuilder('tipo_dispositivo')
       .select('tipo_dispositivo.tipo', 'categoria') // Selecciona la columna `tipo` como `categoria`
@@ -75,5 +88,13 @@ export class TipoDispositivoService {
       .leftJoinAndSelect('tickets.estado_actual', 'estado_actual') // Relación con la tabla estado_ticket
       .where('tickets.estado_actual_id = :estadoId', { estadoId: 1 }) // Ajusta el valor 1 al ID correspondiente a "en_reparacion"
       .getMany();
+  }
+
+  // Obtener dispositivos por cliente
+  async getDevicesByClient(clienteId: number): Promise<TipoDispositivo[]> {
+    return this.tipoDispositivoRepository.find({
+      where: { usuarioAsignado: { usuario_id: clienteId } },
+      relations: ['usuarioAsignado', 'tickets'], // Incluye relaciones necesarias
+    });
   }
 }

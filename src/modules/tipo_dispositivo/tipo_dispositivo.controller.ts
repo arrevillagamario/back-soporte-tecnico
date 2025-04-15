@@ -1,13 +1,26 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  BadRequestException,
+} from '@nestjs/common';
 import { TipoDispositivoService } from './tipo_dispositivo.service';
 import { TipoDispositivo } from '../../entities/tipo_dispositivo.entity';
 
 @Controller('tipo-dispositivo')
 export class TipoDispositivoController {
-  constructor(private readonly tipoDispositivoService: TipoDispositivoService) {}
+  constructor(
+    private readonly tipoDispositivoService: TipoDispositivoService,
+  ) {}
 
   @Post()
-  async create(@Body() tipoDispositivo: Partial<TipoDispositivo>): Promise<TipoDispositivo> {
+  async create(
+    @Body() tipoDispositivo: Partial<TipoDispositivo>,
+  ): Promise<TipoDispositivo> {
     return this.tipoDispositivoService.create(tipoDispositivo);
   }
 
@@ -18,13 +31,22 @@ export class TipoDispositivoController {
   }
 
   @Get('por-categoria')
-  async getDevicesByCategory(): Promise<{ categoria: string; total: number }[]> {
+  async getDevicesByCategory(): Promise<
+    { categoria: string; total: number }[]
+  > {
     return this.tipoDispositivoService.getDevicesByCategory();
   }
 
   @Get('en-reparacion')
   async getDevicesInRepair(): Promise<TipoDispositivo[]> {
     return this.tipoDispositivoService.getDevicesInRepair();
+  }
+
+  @Get('por-cliente/:clienteId')
+  async getDevicesByClient(
+    @Param('clienteId') clienteId: number,
+  ): Promise<TipoDispositivo[]> {
+    return this.tipoDispositivoService.getDevicesByClient(clienteId);
   }
 
   @Get()
