@@ -31,7 +31,7 @@ import { ConfigModule } from '@nestjs/config';
       database: 'soporte_tecnico',
       entities: [__dirname + '/entities/*.entity{.ts,.js}'],
       options: {
-        encrypt: false, // Opcional según tu configuración
+        encrypt: true, // Opcional según tu configuración
         trustServerCertificate: true, // Coincide con tu configuración en SSMS
       },
       extra: {
