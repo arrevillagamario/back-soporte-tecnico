@@ -22,10 +22,10 @@ export class ComentarioTicketController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<ComentarioTicket | null> {
-    return this.comentarioTicketService.findOne(id);
+  async findAllByTicketId(@Param('id') id: number): Promise<ComentarioTicket[]> {
+    return this.comentarioTicketService.findByTicketId(id);
   }
-
+  
   @Post()
   async create(
     @Body() comentarioTicket: ComentarioTicket,

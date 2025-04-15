@@ -16,6 +16,13 @@ export class ComentarioTicketService {
     });
   }
 
+  async findByTicketId(ticketId: number): Promise<ComentarioTicket[]> {
+    return this.comentarioTicketRepository.find({
+      where: { ticket: { ticket_id: ticketId } },
+      relations: ['ticket', 'usuario'],
+    });
+  }
+
   async findOne(id: number): Promise<ComentarioTicket | null> {
     return this.comentarioTicketRepository.findOne({
       where: { comentario_id: id },
