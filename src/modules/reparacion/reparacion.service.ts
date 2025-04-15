@@ -1,8 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reparacion } from '../../entities/reparacion.entity';
 import { Componente } from '../../entities/componente.entity';
+import { Ticket } from 'src/entities/ticket.entity';
+import { Usuario } from 'src/entities/usuario.entity';
+import { CreateReparacionDto } from './dto/CreateReparacionDto';
 
 @Injectable()
 export class ReparacionService {
@@ -10,7 +13,11 @@ export class ReparacionService {
     @InjectRepository(Reparacion)
     private readonly reparacionRepository: Repository<Reparacion>,
     @InjectRepository(Componente)
-    private readonly componenteRepository: Repository<Componente>, // Inyecta el repositorio de Componente
+    private readonly componenteRepository: Repository<Componente>, 
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>, // Asegúrate de importar el modelo Usuario correctamente
   ) {}
 
   async findAll(): Promise<Reparacion[]> {
@@ -19,11 +26,85 @@ export class ReparacionService {
     });
   }
 
-  async findOne(id: number): Promise<Reparacion | null> {
-    return this.reparacionRepository.findOne({
+  async findOne(id: number): Promise<any> {
+    const reparacion = await this.reparacionRepository.findOne({
       where: { reparacion_id: id },
-      relations: ['ticket', 'tecnico', 'componentes'],
+      relations: ['ticket', 'tecnico', 'componentes', 'componentes.componente'], // Incluye las relaciones necesarias
     });
+
+    if (!reparacion) {
+      throw new BadRequestException(`La reparación con ID ${id} no existe.`);
+    }
+
+    return {
+      reparacion_id: reparacion.reparacion_id,
+      fecha_reparacion: reparacion.fecha_reparacion,
+      ticket: reparacion.ticket,
+      tecnico: reparacion.tecnico,
+      componentes: reparacion.componentes.map((reparacionComponente) => ({
+        reparacion_componente_id: reparacionComponente.reparacion_componente_id,
+        componente: {
+          componente_id: reparacionComponente.componente.componente_id,
+          nombre: reparacionComponente.componente.nombre,
+          precio: reparacionComponente.componente.precio,
+          cantidad_disponible: reparacionComponente.componente.cantidad,
+        },
+        cantidad_usada: reparacionComponente.cantidad_usada,
+      })),
+    };
+  }
+
+  async findOneDetalle(id: number): Promise<any> {
+    const reparacion = await this.reparacionRepository.findOne({
+      where: { ticket:{ ticket_id: id} },
+      relations: ['ticket', 'tecnico', 'componentes', 'componentes.componente'], // Incluye las relaciones necesarias
+    });
+
+    if (!reparacion) {
+      throw new BadRequestException(`La reparación con ID ${id} no existe.`);
+    }
+
+    return {
+      reparacion_id: reparacion.reparacion_id,
+      fecha_reparacion: reparacion.fecha_reparacion,
+      ticket: reparacion.ticket,
+      tecnico: reparacion.tecnico,
+      componentes: reparacion.componentes.map((reparacionComponente) => ({
+        reparacion_componente_id: reparacionComponente.reparacion_componente_id,
+        componente: {
+          componente_id: reparacionComponente.componente.componente_id,
+          nombre: reparacionComponente.componente.nombre,
+          precio: reparacionComponente.componente.precio,
+          cantidad_disponible: reparacionComponente.componente.cantidad,
+        },
+        cantidad_usada: reparacionComponente.cantidad_usada,
+      })),
+    };
+  }
+
+  async createReparacion(dto: CreateReparacionDto): Promise<Reparacion> {
+    const { fecha_reparacion, ticket_id, usuario_tecnico_id } = dto;
+
+    // Buscar el ticket
+    const ticket = await this.ticketRepository.findOne({ where: { ticket_id } });
+    if (!ticket) {
+      throw new NotFoundException(`El ticket con ID ${ticket_id} no existe.`);
+    }
+
+    // Buscar el usuario técnico
+    const tecnico = await this.usuarioRepository.findOne({ where: { usuario_id: usuario_tecnico_id } });
+    if (!tecnico) {
+      throw new NotFoundException(`El usuario técnico con ID ${usuario_tecnico_id} no existe.`);
+    }
+
+    // Crear instancia de Reparacion
+    const reparacion = new Reparacion();
+    reparacion.fecha_reparacion = new Date(fecha_reparacion);
+    reparacion.ticket = ticket;
+    reparacion.tecnico = tecnico;
+
+    // Guardar en BD (sin detalles)
+    return this.reparacionRepository.save(reparacion);
   }
 
   async create(reparacion: Reparacion): Promise<Reparacion> {
