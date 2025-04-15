@@ -24,10 +24,10 @@ import { ConfigModule } from '@nestjs/config';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      host: 'DESKTOP-FEGH0CR', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
+      host: 'maqui-manage.database.windows.net', // Usar el nombre exacto del servidor como aparece en SQL Server Management Studio
       port: 1433,
-      username: 'sa', // Usuario que aparece en tu imagen
-      password: '12345', // La contraseña que usas en SSMS
+      username: 'jairo', // Usuario que aparece en tu imagen
+      password: 'MaquiManage2024', // La contraseña que usas en SSMS
       database: 'soporte_tecnico',
       entities: [__dirname + '/entities/*.entity{.ts,.js}'],
       options: {
